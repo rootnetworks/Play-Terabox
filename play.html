@@ -24,11 +24,10 @@
     // Function to initialize video player with Telegram start_param
     function initPlayer() {
         // Retrieve the start_param from the Telegram Web App
-        let startParam = window.Telegram.WebApp.initDataUnsafe.start_param;
 
         // Check if startParam is not empty
         if (startParam) {
-            const videoSrc = `https://www.1024terabox.com/sharing/embed?surl=${startParam}&autoplay=true&mute=false`;
+            const videoSrc = `https://www.1024terabox.com/sharing/embed?surl=DDnKF5UisLGWZPwFAEv37g&autoplay=true&mute=false`;
             document.getElementById('videoFrame').src = videoSrc;
 
             // Initialize Plyr
