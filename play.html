@@ -1,57 +1,51 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responsive JW Player Video</title>
-    <script type="text/javascript" src="//cdn.jsdelivr.net/jwplayer/5.10/jwplayer.js"></script>
-    <style type="text/css">
-        html, body {
-            height: 100%;
-            width: 100%;
-            padding: 0;
-            margin: 0;
-            overflow: hidden;
-        }
-        #player-container {
-            position: relative;
-            padding-top: 56.25%; /* 16:9 Aspect Ratio */
-        }
-        #player {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-    </style>
+    <title>Custom Video Player</title>
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
 </head>
 <body>
-    <div id="player-container">
-        <div id="player"></div>
+
+    <div class="plyr__video-embed" id="player">
+        <iframe
+          id="videoFrame"
+          src=""
+          allowfullscreen
+          allowtransparency
+          allow="autoplay"
+        ></iframe>
     </div>
-    <script type="text/javascript">
-        // Function to get URL parameters
-        function getUrlParameter(name) {
-            name = name.replace(/[]/, '\').replace(/[]/, '\');
-            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-            var results = regex.exec(location.search);
-            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+
+<!-- Plyr.js JavaScript -->
+<script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+<script>
+    // Function to initialize video player with Telegram start_param
+    function initPlayer() {
+        // Retrieve the start_param from the Telegram Web App
+        let startParam = window.Telegram.WebApp.initDataUnsafe.start_param;
+
+        // Check if startParam is not empty
+        if (startParam) {
+            const videoSrc = `https://www.1024terabox.com/sharing/embed?surl=${startParam}&autoplay=true&mute=false`;
+            document.getElementById('videoFrame').src = videoSrc;
+
+            // Initialize Plyr
+            const player = new Plyr('#player iframe');
+        } else {
+            console.error('No start_param found in Telegram Web App data.');
         }
+    }
 
-        // Get video and thumbnail URLs from parameters
-        var videoUrl = getUrlParameter('video') || 'https://example.com/default_video.mp4';
-        var thumbnailUrl = getUrlParameter('thumbnail') || 'https://example.com/default_thumbnail.jpg';
-
-        // Initialize JW Player
-        jwplayer("player").setup({
-            file: videoUrl,
-            image: thumbnailUrl,
-            width: "100%",
-            aspectratio: "16:9",
-            stretching: "uniform", // Keeps the video proportional
-            flashplayer: "//cdn.jsdelivr.net/jwplayer/5.10/player.swf"
-        });
-    </script>
+    // Ensure the Telegram WebApp API is loaded
+    window.onload = function() {
+        if (window.Telegram && window.Telegram.WebApp) {
+            initPlayer();
+        } else {
+            console.error('Telegram WebApp API not loaded.');
+        }
+    };
+</script>
 </body>
 </html>
