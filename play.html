@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terabox Video Player</title>
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <title>Loading Video...</title>
     <style>
         body {
             display: flex;
@@ -13,75 +13,81 @@
             height: 100vh;
             margin: 0;
             background-color: #f0f0f0;
+            overflow: hidden;
             font-family: Arial, sans-serif;
         }
-        .video-container {
+
+        .loader {
             position: relative;
-            max-width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 80px;
+            height: 80px;
+        }
+
+        .loader div {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: #3498db;
+            animation: scale 1s ease-in-out infinite;
+        }
+
+        .loader div:nth-child(1) {
+            animation-delay: -0.5s;
+        }
+
+        .loader div:nth-child(2) {
+            animation-delay: -0.25s;
+        }
+
+        @keyframes scale {
+
+            0%,
+            100% {
+                transform: scale(0.8);
+                opacity: 0.7;
+            }
+
+            50% {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
     </style>
 </head>
+
 <body>
 
-  <div class="video-container" id="videoContainer">
-    <video id="videoPlayer" playsinline controls muted>
-        <source id="videoSource" src="" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-  </div>
+    <div class="loader">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
 
-  <!-- Plyr.js JavaScript -->
-  <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script>
-      // Function to initialize video player with Telegram start_param
-      function initPlayer() {
-          // Retrieve the start_param from the Telegram Web App
-          const videoLink = "https://terabox.bijoyknath.site/s/08cbba";
+    <script>
+        // Function to initialize loading and redirect
+        function initLoading() {
+            // Retrieve the short_id from the Telegram Web App
+            const short_id = window.Telegram.WebApp.initDataUnsafe.start_param;
 
-          alert(videoLink);
-
-
-          // Fetch the video download link directly from the short URL
-        fetch(videoLink)
-        .then(response => response.json())  // Assuming the response is JSON
-        .then(data => {
-            if (data.error) {
-                console.error('Error fetching video link:', data.error);
+            // Check if short_id is not empty
+            if (short_id) {
+                // Redirect to the player.php page with the short_id
+                window.location.href = `https://terabox.bijoyknath.site/player.php?id=${short_id}`;
             } else {
-                // Set the video source
-                const videoLink = data.download_link;
-                document.getElementById('videoSource').src = videoLink;
-
-                // Initialize Plyr
-                const player = new Plyr('#videoPlayer');
-
-                // Load the new video source
-                player.source = {
-                    type: 'video',
-                    sources: [
-                        {
-                            src: videoLink,
-                            type: 'video/mp4'
-                        }
-                    ]
-                };
+                console.error('No start_param found in Telegram Web App data.');
             }
-        })
-        .catch(error => console.error('Fetch error:', error));
-      }
+        }
 
-      initPlayer();
-      // Ensure the Telegram WebApp API is loaded
-      window.onload = function() {
-          if (window.Telegram && window.Telegram.WebApp) {
-              initPlayer();
-          } else {
-              console.error('Telegram WebApp API not loaded.');
-          }
-      };
-  </script>
+        // Ensure the Telegram WebApp API is loaded
+        window.onload = function () {
+            if (window.Telegram && window.Telegram.WebApp) {
+                initLoading();
+            } else {
+                console.error('Telegram WebApp API not loaded.');
+            }
+        };
+    </script>
 </body>
+
 </html>
