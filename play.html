@@ -39,34 +39,41 @@
       // Function to initialize video player with Telegram start_param
       function initPlayer() {
           // Retrieve the start_param from the Telegram Web App
-          const videoLink = window.Telegram.WebApp.initDataUnsafe.start_param;
+          const videoLink = "https://terabox.bijoyknath.site/s/08cbba";
 
           alert(videoLink);
 
 
-          // Check if videoLink is not empty
-          if (videoLink) {
-              // Set the video source
-              document.getElementById('videoSource').src = videoLink;
+          // Fetch the video download link directly from the short URL
+        fetch(videoLink)
+        .then(response => response.json())  // Assuming the response is JSON
+        .then(data => {
+            if (data.error) {
+                console.error('Error fetching video link:', data.error);
+            } else {
+                // Set the video source
+                const videoLink = data.download_link;
+                document.getElementById('videoSource').src = videoLink;
 
-              // Initialize Plyr
-              const player = new Plyr('#videoPlayer');
+                // Initialize Plyr
+                const player = new Plyr('#videoPlayer');
 
-              // Load the new video source
-              player.source = {
-                  type: 'video',
-                  sources: [
-                      {
-                          src: videoLink,
-                          type: 'video/mp4'
-                      }
-                  ]
-              };
-          } else {
-              console.error('No start_param found in Telegram Web App data.');
-          }
+                // Load the new video source
+                player.source = {
+                    type: 'video',
+                    sources: [
+                        {
+                            src: videoLink,
+                            type: 'video/mp4'
+                        }
+                    ]
+                };
+            }
+        })
+        .catch(error => console.error('Fetch error:', error));
       }
 
+      initPlayer();
       // Ensure the Telegram WebApp API is loaded
       window.onload = function() {
           if (window.Telegram && window.Telegram.WebApp) {
